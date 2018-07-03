@@ -5,7 +5,7 @@
 import scalariform.formatter.preferences._
 
 enablePlugins(GitVersioning)
-git.baseVersion := "1.3.0"
+git.baseVersion := "1.3.0-perf"
 
 organization in GlobalScope := "com.typesafe"
 

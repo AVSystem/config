@@ -28,8 +28,7 @@ final class ResolveMemos {
     ResolveMemos put(MemoKey key, AbstractConfigValue value) {
         // completely inefficient, but so far nobody cares about resolve()
         // performance, we can clean it up someday...
-        Map<MemoKey, AbstractConfigValue> copy = new HashMap<MemoKey, AbstractConfigValue>(memos);
-        copy.put(key, value);
-        return new ResolveMemos(copy);
+        memos.put(key, value); //super ugly, but sufficient for now
+        return new ResolveMemos(memos);
     }
 }
