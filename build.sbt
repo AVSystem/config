@@ -7,20 +7,35 @@ import scalariform.formatter.preferences._
 enablePlugins(GitVersioning)
 git.baseVersion := "1.3.0-perf"
 
-organization in GlobalScope := "com.typesafe"
+organization in GlobalScope := "com.avsystem"
 
 scalacOptions in GlobalScope in Compile := Seq("-unchecked", "-deprecation", "-feature")
 scalacOptions in GlobalScope in Test := Seq("-unchecked", "-deprecation", "-feature")
 
 scalaVersion in ThisBuild := "2.10.4"
 
-val sonatype = new PublishToSonatype {
-  def projectUrl    = "https://github.com/lightbend/config"
-  def developerId   = "havocp"
-  def developerName = "Havoc Pennington"
-  def developerUrl  = "http://ometer.com/"
-  def scmUrl        = "git://github.com/lightbend/config.git"
+isSnapshot in ThisBuild := false
+
+publishTo in ThisBuild := {
+  val avsystem = "https://repo.avsystem.com/"
+  if (isSnapshot.value)
+    Some("snapshots" at avsystem + "libs-snapshot")
+  else
+    Some("releases"  at avsystem + "libs-release-local")
 }
+
+/* The file with credentials must have following format:
+ *
+ * realm=Artifactory Realm
+ * host=repo.avsystem.com
+ * user=<LDAP user>
+ * password=<LDAP password>
+ *
+ */
+credentials in ThisBuild +=
+  Credentials(Path.userHome / ".repo.avsystem.com.credentials")
+
+
 
 lazy val commonSettings: Seq[Setting[_]] = Def.settings(
   unpublished,
@@ -47,11 +62,8 @@ lazy val root = (project in file("."))
 
 lazy val configLib =  Project("config", file("config"))
   .settings(
-    sonatype.settings,
     osgiSettings,
     OsgiKeys.exportPackage := Seq("com.typesafe.config", "com.typesafe.config.impl"),
-    publish := sys.error("use publishSigned instead of plain publish"),
-    publishLocal := sys.error("use publishLocalSigned instead of plain publishLocal"),
     packageOptions in (Compile, packageBin) +=
       Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config" ),
     scalariformPreferences := scalariformPreferences.value
@@ -72,14 +84,6 @@ lazy val complexAppScala = proj("config-complex-app-scala", file("examples/scala
 lazy val simpleLibJava  = proj("config-simple-lib-java",  file("examples/java/simple-lib"))  dependsOn configLib
 lazy val simpleAppJava  = proj("config-simple-app-java",  file("examples/java/simple-app"))  dependsOn simpleLibJava
 lazy val complexAppJava = proj("config-complex-app-java", file("examples/java/complex-app")) dependsOn simpleLibJava
-
-useGpg := true
-
-aggregate in PgpKeys.publishSigned := false
-PgpKeys.publishSigned := (PgpKeys.publishSigned in configLib).value
-
-aggregate in PgpKeys.publishLocalSigned := false
-PgpKeys.publishLocalSigned := (PgpKeys.publishLocalSigned in configLib).value
 
 val unpublished = Seq(
   // no artifacts in this project
