@@ -5,7 +5,7 @@
 import scalariform.formatter.preferences._
 
 enablePlugins(GitVersioning)
-git.baseVersion := "1.3.0-perf"
+git.baseVersion := "1.3.4"
 
 organization in GlobalScope := "com.avsystem"
 
