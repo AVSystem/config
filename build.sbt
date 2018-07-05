@@ -5,7 +5,7 @@
 import scalariform.formatter.preferences._
 
 enablePlugins(GitVersioning)
-git.baseVersion := "1.3.5"
+git.baseVersion := "1.3.6"
 
 organization in GlobalScope := "com.avsystem"
 
@@ -63,7 +63,7 @@ lazy val root = (project in file("."))
 lazy val configLib =  Project("config", file("config"))
   .settings(
     osgiSettings,
-    OsgiKeys.exportPackage := Seq("com.typesafe.config", "com.typesafe.config.impl"),
+    OsgiKeys.exportPackage := Seq("com.typesafe.config", "com.typesafe.config.impl", "com.typesafe.config.parser"),
     packageOptions in (Compile, packageBin) +=
       Package.ManifestAttributes("Automatic-Module-Name" -> "typesafe.config" ),
     scalariformPreferences := scalariformPreferences.value
